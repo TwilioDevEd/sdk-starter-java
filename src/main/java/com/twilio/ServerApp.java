@@ -55,7 +55,7 @@ public class ServerApp {
         configuration.put("TWILIO_GCM_CREDENTIAL_SID", System.getenv("TWILIO_GCM_CREDENTIAL_SID"));
         configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
         configuration.put("TWILIO_CONFIGURATION_SID",System.getenv("TWILIO_CONFIGURATION_SID"));
-        configuration.put("TWILIO_IPM_SERVICE_SID",System.getenv("TWILIO_IPM_SERVICE_SID"));
+        configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
         configuration.put("TWILIO_SYNC_SERVICE_SID",System.getenv("TWILIO_SYNC_SERVICE_SID"));
 
         // Get the configuration for variables for the health check
@@ -93,7 +93,7 @@ public class ServerApp {
 
             List<Grant> grants = new ArrayList<>();
 
-            // Add IP messaging grant if configured
+            // Add Sync grant if configured
             if (configuration.containsKey("TWILIO_SYNC_SERVICE_SID")) {
                 SyncGrant grant = new SyncGrant();
                 grant.setEndpointId(endpointId);
@@ -101,11 +101,11 @@ public class ServerApp {
                 grants.add(grant);
             }
 
-            // Add Sync grant if configured
-            if (configuration.containsKey("TWILIO_IPM_SERVICE_SID")) {
+            // Add Chat grant if configured
+            if (configuration.containsKey("TWILIO_CHAT_SERVICE_SID")) {
                 IpMessagingGrant grant = new IpMessagingGrant();
                 grant.setEndpointId(endpointId);
-                grant.setServiceSid(configuration.get("TWILIO_IPM_SERVICE_SID"));
+                grant.setServiceSid(configuration.get("TWILIO_CHAT_SERVICE_SID"));
                 grants.add(grant);
             }
 

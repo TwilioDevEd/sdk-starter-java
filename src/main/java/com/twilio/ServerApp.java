@@ -11,10 +11,14 @@ import java.util.Map;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 
 import com.twilio.jwt.accesstoken.*;
 import com.twilio.rest.notify.v1.service.BindingCreator;
 import com.twilio.rest.notify.v1.service.Binding;
+import com.twilio.rest.notify.v1.service.Notification;
+import com.twilio.rest.notify.v1.service.NotificationCreator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,12 @@ public class ServerApp {
         String error;
     }
 
+    private static class SendNotificationResponse {
+        String message;
+        String error;
+    }
+
+
     public static void main(String[] args) {
 
         // Serve static files from src/main/resources/public
@@ -51,11 +61,9 @@ public class ServerApp {
         configuration.put("TWILIO_ACCOUNT_SID", System.getenv("TWILIO_ACCOUNT_SID"));
         configuration.put("TWILIO_API_KEY", System.getenv("TWILIO_API_KEY"));
         configuration.put("TWILIO_API_SECRET", System.getenv("TWILIO_API_SECRET"));
-        configuration.put("TWILIO_APN_CREDENTIAL_SID", System.getenv("TWILIO_APN_CREDENTIAL_SID"));
-        configuration.put("TWILIO_GCM_CREDENTIAL_SID", System.getenv("TWILIO_GCM_CREDENTIAL_SID"));
         configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
         configuration.put("TWILIO_CONFIGURATION_SID",System.getenv("TWILIO_CONFIGURATION_SID"));
-        configuration.put("TWILIO_IPM_SERVICE_SID",System.getenv("TWILIO_IPM_SERVICE_SID"));
+        configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
         configuration.put("TWILIO_SYNC_SERVICE_SID",System.getenv("TWILIO_SYNC_SERVICE_SID"));
 
         // Get the configuration for variables for the health check
@@ -93,7 +101,7 @@ public class ServerApp {
 
             List<Grant> grants = new ArrayList<>();
 
-            // Add IP messaging grant if configured
+            // Add Sync grant if configured
             if (configuration.containsKey("TWILIO_SYNC_SERVICE_SID")) {
                 SyncGrant grant = new SyncGrant();
                 grant.setEndpointId(endpointId);
@@ -101,11 +109,11 @@ public class ServerApp {
                 grants.add(grant);
             }
 
-            // Add Sync grant if configured
-            if (configuration.containsKey("TWILIO_IPM_SERVICE_SID")) {
+            // Add Chat grant if configured
+            if (configuration.containsKey("TWILIO_CHAT_SERVICE_SID")) {
                 IpMessagingGrant grant = new IpMessagingGrant();
                 grant.setEndpointId(endpointId);
-                grant.setServiceSid(configuration.get("TWILIO_IPM_SERVICE_SID"));
+                grant.setServiceSid(configuration.get("TWILIO_CHAT_SERVICE_SID"));
                 grants.add(grant);
             }
 
@@ -155,7 +163,6 @@ public class ServerApp {
                 logger.info("Binding successfully created");
                 logger.debug(binding.toString());
 
-
                 // Send a JSON response indicating success
                 BindingResponse bindingResponse = new BindingResponse();
                 bindingResponse.message = "Binding Created";
@@ -172,6 +179,45 @@ public class ServerApp {
                 response.type("application/json");
                 response.status(500);
                 return gson.toJson(bindingResponse);
+            }
+        });
+
+        post("/send-notification", (request, response) -> {
+
+            // Authenticate with Twilio
+            Twilio.init(configuration.get("TWILIO_API_KEY"),configuration.get("TWILIO_API_SECRET"),configuration.get("TWILIO_ACCOUNT_SID"));
+
+            try {
+                // Get the identity
+                String identity = request.raw().getParameter("identity");
+                logger.info("Identity: " + identity);
+
+                // Create the notification
+                String serviceSid = configuration.get("TWILIO_NOTIFICATION_SERVICE_SID");
+                Notification notification = Notification
+                    .creator(serviceSid)
+                    .setBody("Hello " + identity)
+                    .setIdentity(identity)
+                    .create();
+                logger.info("Notification successfully created");
+                logger.debug(notification.toString());
+
+                // Send a JSON response indicating success
+                SendNotificationResponse sendNotificationResponse = new SendNotificationResponse();
+                sendNotificationResponse.message = "Notification Created";
+                response.type("application/json");
+                return new Gson().toJson(sendNotificationResponse);
+
+            } catch (Exception ex) {
+                logger.error("Exception creating notification: " + ex.getMessage(), ex);
+
+                // Send a JSON response indicating an error
+                SendNotificationResponse sendNotificationResponse = new SendNotificationResponse();
+                sendNotificationResponse.message = "Failed to create notification: " + ex.getMessage();
+                sendNotificationResponse.error = ex.getMessage();
+                response.type("application/json");
+                response.status(500);
+                return new Gson().toJson(sendNotificationResponse);
             }
         });
     }

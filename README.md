@@ -2,7 +2,7 @@
 
 This sample project demonstrates how to use Twilio APIs in a Java web 
 application. Once the app is up and running, check out [the home page](http://localhost:4567)
-to see which demos you can run. You'll find examples for [IP Messaging](https://www.twilio.com/ip-messaging), 
+to see which demos you can run. You'll find examples for [Chat](https://www.twilio.com/chat), 
 [Video](https://www.twilio.com/video), [Sync](https://www.twilio.com/sync), and more.
 
 Let's get started!
@@ -41,12 +41,10 @@ Depending on which demos you'd like to run, you'll need to configure a few more 
 
 | Config Value  | Product Demo | Description |
 | :-------------  |:------------- |:------------- |
-`TWILIO_IPM_SERVICE_SID` | IP Messaging | Like a database for your IP Messaging data - [generate one in the console here](https://www.twilio.com/console/ip-messaging/services)
+`TWILIO_CHAT_SERVICE_SID` | Chat | Like a database for your Chat data - [generate one in the console here](https://www.twilio.com/console/chat/services)
 `TWILIO_CONFIGURATION_SID` | Video | Identifier for a set of config properties for your video application - [find yours here](https://www.twilio.com/console/video/profiles)
 `TWILIO_SYNC_SERVICE_SID` | Sync (Preview) | Like a database for your Sync data - generate one with the curl command below.
 `TWILIO_NOTIFICATION_SERVICE_SID` | Notify (Preview) | You will need to create a Notify service - [generate one here](https://www.twilio.com/console/notify/services)
-`TWILIO_APN_CREDENTIAL_SID` | Notify (Preview) | Adds iOS notification ability to your app - [generate one here](https://www.twilio.com/console/notify/credentials). You'll need to provision your APN push credentials to generate this. See [this](https://www.twilio.com/docs/api/ip-messaging/guides/push-notifications-ios) guide on how to do that. (Optional)
-`TWILIO_GCM_CREDENTIAL_SID`  | Notify (Preview) |Adds Android/GCM notification ability to your app - [generate one here](https://www.twilio.com/console/notify/credentials). You'll need to provision your GCM push credentials to generate this. See [this](https://www.twilio.com/docs/api/ip-messaging/guides/push-notifications-android) guide on how to do that (Optional)
 
 #### Temporary: Generating a Sync Service Instance
 
@@ -59,6 +57,10 @@ curl -X POST https://preview.twilio.com/Sync/Services \
  -d 'FriendlyName=MySyncServiceInstance' \
  -u 'SKXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:your_api_secret'
 ```
+
+### Configuring Notify
+
+You will need to create a Notify Service through the [Twilio Console](https://www.twilio.com/console/notify/services), and add at least one credential on the [Mobile Push Credential screen](https://www.twilio.com/console/notify/credentials) (such as Apple Push Notification Service or Firebase Cloud Messaging for Android) to send notifications using Notify.
 
 ## Run the sample application
 
@@ -95,7 +97,7 @@ java -jar target/sdk-starter-1.0-SNAPSHOT.jar
 
 Your application should now be running at [http://localhost:4567/](http://localhost:4567/). 
 
-![Home Screen](https://cloud.githubusercontent.com/assets/809856/19532947/673cc7d6-9603-11e6-9a7c-13c0f9ab33b7.png)
+![Home Screen](https://cloud.githubusercontent.com/assets/809856/23171215/8107bd9e-f817-11e6-94c5-2b132d798fae.png)
 
 Check your config values, and follow the links to the demo applications!
 

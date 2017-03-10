@@ -112,7 +112,6 @@ public class ServerApp {
             // Add Chat grant if configured
             if (configuration.containsKey("TWILIO_CHAT_SERVICE_SID")) {
                 IpMessagingGrant grant = new IpMessagingGrant();
-                grant.setEndpointId(endpointId);
                 grant.setServiceSid(configuration.get("TWILIO_CHAT_SERVICE_SID"));
                 grants.add(grant);
             }

@@ -90,7 +90,6 @@ public class ServerApp {
 
             // Create an endpoint ID which uniquely identifies the user on their current device
             String appName = "TwilioAppDemo";
-            String endpointId = appName + ":" + identity + ":" + request.params("device");
 
             // Create access token builder
             AccessToken.Builder builder = new AccessToken.Builder(
@@ -104,7 +103,6 @@ public class ServerApp {
             // Add Sync grant if configured
             if (configuration.containsKey("TWILIO_SYNC_SERVICE_SID")) {
                 SyncGrant grant = new SyncGrant();
-                grant.setEndpointId(endpointId);
                 grant.setServiceSid(configuration.get("TWILIO_SYNC_SERVICE_SID"));
                 grants.add(grant);
             }

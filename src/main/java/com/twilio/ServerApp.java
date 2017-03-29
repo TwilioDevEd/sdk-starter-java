@@ -3,6 +3,7 @@ package com.twilio;
 import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
+import static spark.Spark.afterAfter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,6 +66,9 @@ public class ServerApp {
         configuration.put("TWILIO_CONFIGURATION_SID",System.getenv("TWILIO_CONFIGURATION_SID"));
         configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
         configuration.put("TWILIO_SYNC_SERVICE_SID",System.getenv("TWILIO_SYNC_SERVICE_SID"));
+
+        // Log all requests and responses
+        afterAfter(new LoggingFilter());
 
         // Get the configuration for variables for the health check
         get("/config", (request, response) -> {

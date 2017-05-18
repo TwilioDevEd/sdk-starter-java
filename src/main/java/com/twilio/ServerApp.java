@@ -12,19 +12,15 @@ import java.util.Map;
 
 import com.github.javafaker.Faker;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-
 
 import com.twilio.jwt.accesstoken.*;
 import com.twilio.rest.notify.v1.service.BindingCreator;
 import com.twilio.rest.notify.v1.service.Binding;
 import com.twilio.rest.notify.v1.service.Notification;
-import com.twilio.rest.notify.v1.service.NotificationCreator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import spark.ModelAndView;
 
 public class ServerApp {
 
@@ -32,7 +28,6 @@ public class ServerApp {
 
     private class BindingRequest {
         String endpoint;
-        String identity;
         String BindingType;
         String Address;
     }
@@ -63,7 +58,6 @@ public class ServerApp {
         configuration.put("TWILIO_API_KEY", System.getenv("TWILIO_API_KEY"));
         configuration.put("TWILIO_API_SECRET", System.getenv("TWILIO_API_SECRET"));
         configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
-        configuration.put("TWILIO_CONFIGURATION_SID",System.getenv("TWILIO_CONFIGURATION_SID"));
         configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
         configuration.put("TWILIO_SYNC_SERVICE_SID",System.getenv("TWILIO_SYNC_SERVICE_SID"));
 
@@ -118,12 +112,10 @@ public class ServerApp {
                 grants.add(grant);
             }
 
-            // Add Video grant if configured
-            if (configuration.containsKey("TWILIO_CONFIGURATION_SID")) {
-                VideoGrant grant  = new VideoGrant();
-                grant.setConfigurationProfileSid(configuration.get("TWILIO_CONFIGURATION_SID"));
-                grants.add(grant);
-            }
+            // Add Video grant
+            VideoGrant grant  = new VideoGrant();
+            grant.setRoom("default room");
+            grants.add(grant);
 
             builder.grants(grants);
 
@@ -157,7 +149,9 @@ public class ServerApp {
             // Create a binding
             Binding.BindingType bindingType = Binding.BindingType.forValue(bindingRequest.BindingType);
             BindingCreator creator = Binding.creator(configuration.get("TWILIO_NOTIFICATION_SERVICE_SID"),
-                    bindingRequest.endpoint, bindingRequest.identity, bindingType, bindingRequest.Address);
+                    bindingRequest.endpoint,
+                    bindingType,
+                    bindingRequest.Address);
 
             try {
                 Binding binding = creator.create();

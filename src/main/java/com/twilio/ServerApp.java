@@ -114,7 +114,6 @@ public class ServerApp {
 
             // Add Video grant
             VideoGrant grant  = new VideoGrant();
-            grant.setRoom("default room");
             grants.add(grant);
 
             builder.grants(grants);

@@ -27,7 +27,7 @@ public class ServerApp {
     final static Logger logger = LoggerFactory.getLogger(ServerApp.class);
 
     private class BindingRequest {
-        String endpoint;
+        String identity;
         String BindingType;
         String Address;
     }
@@ -148,7 +148,7 @@ public class ServerApp {
             // Create a binding
             Binding.BindingType bindingType = Binding.BindingType.forValue(bindingRequest.BindingType);
             BindingCreator creator = Binding.creator(configuration.get("TWILIO_NOTIFICATION_SERVICE_SID"),
-                    bindingRequest.endpoint,
+                    bindingRequest.identity,
                     bindingType,
                     bindingRequest.Address);
 

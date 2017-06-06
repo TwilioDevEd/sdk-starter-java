@@ -190,7 +190,7 @@ public class ServerApp {
                 String serviceSid = configuration.get("TWILIO_NOTIFICATION_SERVICE_SID");
                 Notification notification = Notification
                     .creator(serviceSid)
-                    .setBody("Hello " + identity)
+                    .setBody("Hello world!")
                     .setIdentity(identity)
                     .create();
                 logger.info("Notification successfully created");

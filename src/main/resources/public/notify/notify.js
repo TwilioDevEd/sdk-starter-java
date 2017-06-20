@@ -1,9 +1,8 @@
 $(function() {
-
     $('#sendNotificationButton').on('click', function() {
-        $.post('/send-notification', {
-           identity: $('#identityInput').val()
-        }, function(response) {
+        var identity = $('#identityInput').val();
+        var data = JSON.stringify({ "identity" : [ identity ]});
+        $.post('/send-notification', data, function(response) {
             $('#identityInput').val('');
             $('#message').html(response.message);
             console.log(response);

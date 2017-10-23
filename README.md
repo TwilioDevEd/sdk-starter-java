@@ -67,10 +67,6 @@ A Push Credential | Generate one with Apple or Google and [configure it as a Not
 Once you've done that, run the application and [open a browser](localhost:4567/notify)!
 
 
-### Configuring Notify
-
-You will need to create a Notify Service through the [Twilio Console](https://www.twilio.com/console/notify/services), and add at least one credential on the [Mobile Push Credential screen](https://www.twilio.com/console/notify/credentials) (such as Apple Push Notification Service or Firebase Cloud Messaging for Android) to send notifications using Notify.
-
 ## Run the sample application
 
 This application uses the lightweight [Spark Framework](http://www.sparkjava.com), and

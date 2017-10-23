@@ -48,7 +48,8 @@ public class ServerApp {
         configuration.put("TWILIO_API_SECRET", System.getenv("TWILIO_API_SECRET"));
         configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
         configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
-        configuration.put("TWILIO_SYNC_SERVICE_SID",System.getenv("TWILIO_SYNC_SERVICE_SID"));
+        String syncServiceSID = System.getenv("TWILIO_SYNC_SERVICE_SID");
+        configuration.put("TWILIO_SYNC_SERVICE_SID",syncServiceSID != null ? syncServiceSID : "default");
 
         // Log all requests and responses
         afterAfter(new LoggingFilter());
@@ -229,7 +230,7 @@ public class ServerApp {
 
         // Add Chat grant if configured
         if (configuration.containsKey("TWILIO_CHAT_SERVICE_SID")) {
-            IpMessagingGrant grant = new IpMessagingGrant();
+            ChatGrant grant = new ChatGrant();
             grant.setServiceSid(configuration.get("TWILIO_CHAT_SERVICE_SID"));
             grants.add(grant);
         }

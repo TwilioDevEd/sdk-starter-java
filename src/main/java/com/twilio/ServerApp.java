@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.javafaker.Faker;
 import com.google.common.base.CaseFormat;
@@ -40,16 +41,24 @@ public class ServerApp {
         // Serve static files from src/main/resources/public
         staticFileLocation("/public");
 
-
-        // Set up configuration from environment variables
+        // The following environment variables are required.
         Map<String, String> configuration = new HashMap<>();
         configuration.put("TWILIO_ACCOUNT_SID", System.getenv("TWILIO_ACCOUNT_SID"));
         configuration.put("TWILIO_API_KEY", System.getenv("TWILIO_API_KEY"));
         configuration.put("TWILIO_API_SECRET", System.getenv("TWILIO_API_SECRET"));
         configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
-        configuration.put("TWILIO_CHAT_SERVICE_SID",System.getenv("TWILIO_CHAT_SERVICE_SID"));
-        String syncServiceSID = System.getenv("TWILIO_SYNC_SERVICE_SID");
-        configuration.put("TWILIO_SYNC_SERVICE_SID",syncServiceSID != null ? syncServiceSID : "default");
+
+        // These env. variables are optional; capture only those that appear meaningfully configured.
+        // ---
+        Optional.ofNullable(System.getenv("TWILIO_CHAT_SERVICE_SID"))
+                .filter(it -> !it.isEmpty())
+                .ifPresent(chatServiceSid -> configuration.put("TWILIO_CHAT_SERVICE_SID", chatServiceSid));
+
+        String syncServiceSID = Optional.ofNullable(System.getenv("TWILIO_SYNC_SERVICE_SID"))
+                .filter(it -> !it.isEmpty())
+                .orElse("default");     // <-- every Twilio account has a default Sync service.
+        configuration.put("TWILIO_SYNC_SERVICE_SID", syncServiceSID);
+        // ---
 
         // Log all requests and responses
         afterAfter(new LoggingFilter());

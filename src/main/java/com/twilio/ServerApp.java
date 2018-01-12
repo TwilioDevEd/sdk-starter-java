@@ -24,6 +24,8 @@ import com.twilio.rest.notify.v1.service.Binding;
 import com.twilio.rest.notify.v1.service.Notification;
 
 import com.twilio.rest.notify.v1.service.NotificationCreator;
+import com.twilio.rest.sync.v1.Service;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +64,9 @@ public class ServerApp {
 
         // Log all requests and responses
         afterAfter(new LoggingFilter());
+
+        // Ensure that the Sync Default Service is provisioned
+        provisionSyncDefaultService(configuration);
 
         // Get the configuration for variables for the health check
         get("/config", (request, response) -> {
@@ -253,6 +258,11 @@ public class ServerApp {
         AccessToken token = builder.build();
 
         return token.toJwt();
+    }
+
+    private static void provisionSyncDefaultService(Map<String, String> configuration) {
+        Twilio.init(configuration.get("TWILIO_API_KEY"),configuration.get("TWILIO_API_SECRET"),configuration.get("TWILIO_ACCOUNT_SID"));
+        Service.fetcher("default").fetch();
     }
 
     // Convert keys to camelCase to conform with the twilio-java api definition contract

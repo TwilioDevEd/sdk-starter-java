@@ -17,7 +17,7 @@ $(function () {
     syncClient = new Twilio.Sync.Client(tokenResponse.token, { logLevel: 'info' });
     syncClient.on('connectionStateChanged', function(state) {
       if (state != 'connected') {
-        $message.html('Sync is not live (websocket connection <span style="color: red">' + state + '</span>)…');
+        $message.html('Sync is not live (websocket connection <span style="color: red">' + state + '</span>)');
       } else {
         $message.html('Sync is live!');
       }

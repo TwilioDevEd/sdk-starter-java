@@ -108,7 +108,7 @@ public class ServerApp {
             // Create a Faker instance to generate a random username for the connecting user
             Faker faker = new Faker();
             // Generate a random username for the connecting client
-            String identity = faker.firstName() + faker.lastName() + faker.zipCode();
+            String identity = faker.name().firstName() + faker.name().lastName() + faker.address().zipCode();
 
             // create JSON response payload
             HashMap<String, String> json = new HashMap<>();

@@ -29,6 +29,9 @@ import com.twilio.rest.sync.v1.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
+
 public class ServerApp {
 
     final static Logger logger = LoggerFactory.getLogger(ServerApp.class);
@@ -40,23 +43,26 @@ public class ServerApp {
 
     public static void main(String[] args) {
 
+        // Load environment variables from .env or the System environment
+        Dotenv dotenv = Dotenv.load();
+
         // Serve static files from src/main/resources/public
         staticFileLocation("/public");
 
         // The following environment variables are required.
         Map<String, String> configuration = new HashMap<>();
-        configuration.put("TWILIO_ACCOUNT_SID", System.getenv("TWILIO_ACCOUNT_SID"));
-        configuration.put("TWILIO_API_KEY", System.getenv("TWILIO_API_KEY"));
-        configuration.put("TWILIO_API_SECRET", System.getenv("TWILIO_API_SECRET"));
-        configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", System.getenv("TWILIO_NOTIFICATION_SERVICE_SID"));
+        configuration.put("TWILIO_ACCOUNT_SID", dotenv.get("TWILIO_ACCOUNT_SID"));
+        configuration.put("TWILIO_API_KEY", dotenv.get("TWILIO_API_KEY"));
+        configuration.put("TWILIO_API_SECRET", dotenv.get("TWILIO_API_SECRET"));
+        configuration.put("TWILIO_NOTIFICATION_SERVICE_SID", dotenv.get("TWILIO_NOTIFICATION_SERVICE_SID"));
 
         // These env. variables are optional; capture only those that appear meaningfully configured.
         // ---
-        Optional.ofNullable(System.getenv("TWILIO_CHAT_SERVICE_SID"))
+        Optional.ofNullable(dotenv.get("TWILIO_CHAT_SERVICE_SID"))
                 .filter(it -> !it.isEmpty())
                 .ifPresent(chatServiceSid -> configuration.put("TWILIO_CHAT_SERVICE_SID", chatServiceSid));
 
-        String syncServiceSID = Optional.ofNullable(System.getenv("TWILIO_SYNC_SERVICE_SID"))
+        String syncServiceSID = Optional.ofNullable(dotenv.get("TWILIO_SYNC_SERVICE_SID"))
                 .filter(it -> !it.isEmpty())
                 .orElse("default");     // <-- every Twilio account has a default Sync service.
         configuration.put("TWILIO_SYNC_SERVICE_SID", syncServiceSID);

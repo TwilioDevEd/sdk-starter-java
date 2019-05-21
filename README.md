@@ -73,13 +73,7 @@ This application uses the lightweight [Spark Framework](http://www.sparkjava.com
 requires Java 8. 
 
 
-Edit `.env` with the four configuration parameters we gathered from above. Export
-the configuration in this file as system environment variables like so on Unix
-based systems:
-
-```bash
-source .env
-```
+Edit `.env` with the four configuration parameters we gathered from above. 
 
 Now that the application is configured, we need to install our dependencies from Maven.
 

@@ -182,15 +182,24 @@ public class ServerApp {
             // Authenticate with Twilio
             Twilio.init(configuration.get("TWILIO_API_KEY"),configuration.get("TWILIO_API_SECRET"),configuration.get("TWILIO_ACCOUNT_SID"));
 
-            logger.debug(request.body());
-
             Gson gson = new Gson();
 
             try {
-                // Decode the JSON Body into a map
-                Type type = new TypeToken<Map<String, Object>>(){}.getType();
-                Map<String, Object> props = gson.fromJson(request.body(), type);
+                Map<String, Object> props = new HashMap<String, Object>();
+
+                if ("application/json".equals(request.contentType())) {
+                    Type type = new TypeToken<Map<String, Object>>(){}.getType();
+                    props = gson.fromJson(request.body(), type);
+                } else {
+                    for (String param : request.queryParams()) {
+                        props.put(param, request.queryParams(param));
+                    }
+                }
+
                 props = camelCaseKeys(props);
+
+                logger.debug(props.toString());
+
 
                 if (props.containsKey("priority")) {
                     // Convert Priority from Object to enum value
@@ -201,6 +210,14 @@ public class ServerApp {
                 // Add the notification service sid
                 String serviceSid = configuration.get("TWILIO_NOTIFICATION_SERVICE_SID");
                 props.put("pathServiceSid", serviceSid);
+
+                // Convert the identity to an array
+                Object identity = props.get("identity");
+                if (identity instanceof String) {
+                    String[] identities = new String[1];
+                    identities[0] = (String) identity;
+                    props.put("identity", identities);
+                }
 
                 // Create the notification
                 JsonElement jsonElement = gson.toJsonTree(props);
@@ -228,6 +245,7 @@ public class ServerApp {
                 return new Gson().toJson(sendNotificationResponse);
             }
         });
+
     }
 
     private static String generateToken(Map<String, String> configuration, String identity) {

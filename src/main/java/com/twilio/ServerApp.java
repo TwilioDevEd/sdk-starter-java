@@ -109,6 +109,22 @@ public class ServerApp {
             return gson.toJson(json);
         });
 
+        // Create an access token for a given identity
+        get("/token/:identity", "application/json", (request, response) -> {
+
+            String identity = request.params(":identity");
+
+            // create JSON response payload
+            HashMap<String, String> json = new HashMap<>();
+            json.put("identity", identity);
+            json.put("token", generateToken(configuration, identity));
+
+            // Render JSON response
+            Gson gson = new Gson();
+            response.type("application/json");
+            return gson.toJson(json);
+        });
+
         // Create an access token using our Twilio credentials
         get("/token", "application/json", (request, response) -> {
             // Create a Faker instance to generate a random username for the connecting user

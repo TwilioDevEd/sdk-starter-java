@@ -289,10 +289,6 @@ public class ServerApp {
             grants.add(grant);
         }
 
-        // Add Video grant
-        VideoGrant grant  = new VideoGrant();
-        grants.add(grant);
-
         builder.grants(grants);
 
         AccessToken token = builder.build();

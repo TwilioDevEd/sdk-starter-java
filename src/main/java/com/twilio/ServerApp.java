@@ -4,6 +4,8 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 import static spark.Spark.afterAfter;
+import static spark.Spark.internalServerError;
+import static spark.Spark.notFound;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -30,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import spark.ModelAndView;
+import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
 
 public class ServerApp {
@@ -48,6 +52,20 @@ public class ServerApp {
 
         // Serve static files from src/main/resources/public
         staticFileLocation("/public");
+
+         // Using string/html to handle errors
+         internalServerError((request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            return new ThymeleafTemplateEngine().render(
+                new ModelAndView(model, "error")
+            );
+        });
+        notFound((request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            return new ThymeleafTemplateEngine().render(
+                new ModelAndView(model, "error")
+            );
+        });
 
         // The following environment variables are required.
         Map<String, String> configuration = new HashMap<>();
